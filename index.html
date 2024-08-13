@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAssembly Demo</title>
+</head>
+<body>
+    <h1>WebAssembly Example</h1>
+    <p id="status">Loading...</p>
+
+    <script>
+        // Define your importObject here if needed, for example:
+        const importObject = {
+            imports: {
+                // Example of importing functions
+                alert: function(message) {
+                    document.getElementById('status').innerText = message;
+                }
+            }
+        };
+
+        fetch('helloworld.wasm')
+            .then(response => response.arrayBuffer())
+            .then(bytes => WebAssembly.instantiate(bytes, importObject))
+            .then(results => {
+                // Call the _start function from the WebAssembly module
+                results.instance.exports._start();
+
+                // Update the status after successful loading and execution
+                document.getElementById('status').innerText = 'WASM Module Loaded and Executed';
+            })
+            .catch(err => {
+                console.error('Error loading WebAssembly module:', err);
+                document.getElementById('status').innerText = 'Error loading WebAssembly module';
+            });
+    </script>
+</body>
+</html>
